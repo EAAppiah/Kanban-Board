@@ -1,5 +1,5 @@
 <template>
-    <!-- <div>
+    <div>
         <h1>Good evening, Captain</h1>
         <div class="parent">
             <div class="div1"> </div>
@@ -10,7 +10,7 @@
             <div class="div6"> </div>
             <div class="div7"> </div>
         </div>
-    </div> -->
+    </div>
 </template>
 
 <style>

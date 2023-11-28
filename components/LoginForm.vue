@@ -1,20 +1,195 @@
-<template >
-  <div class="container mx-auto">
-    <form class="mx-auto max-w-sm mt-10" action="#" method="post">
-      <img src="" alt="">
-      <h4 class="text-center text-2xl font-bold mb-5">SIRCLE OS</h4>
-
-      <div class="mb-4">
-        <label for="username" class="block text-sm font-medium text-gray-600">Username</label>
-        <input type="email" id="username" class="mt-1 p-2 w-full border rounded-md" aria-describedby="emailHelp">
+<template>
+    <div>
+      <div
+        class="min-h-screen flex items-center justify-center bg-gradient-to-r from-blue-900 via-purple-700 to-cyan-400"
+      >
+        <form class="bg-white rounded-lg p-8 w-96" @submit.prevent="login">
+          <img
+            src=""
+            alt="Logo"
+            class="mx-auto mb-6"
+            width="100"
+          />
+          <h4 class="text-center text-2xl font-semibold mb-6">RIGEL OS</h4>
+          <div class="mb-4">
+            <label for="username" class="block text-gray-700">Username</label>
+            <input
+              v-model="username"
+              type="text"
+              class="w-full py-2 px-3 border-b border-gray-300 focus:outline-none focus:border-indigo-500"
+              id="username"
+              aria-describedby="emailHelp"
+            />
+          </div>
+  
+          <div class="mb-6">
+            <label for="password" class="block text-gray-700">Password</label>
+            <input
+              v-model="password"
+              type="password"
+              class="w-full py-2 px-3 border-b border-gray-300 focus:outline-none focus:border-indigo-500"
+              id="password"
+            />
+          </div>
+  
+          <div class="flex justify-between">
+            <button
+              type="submit"
+              @click="handleLogin"
+              class="py-0.5 px-2 bg-blue-900 text-white rounded-lg"
+            >
+              Sign In
+            </button>
+            <button
+              type="button"
+              @click="openSignOutDialog"
+              class="py-0.5 px-2 bg-red-900 text-white rounded-lg"
+            >
+              Sign Out
+            </button>
+          </div>
+          <div class="feedback-message" v-if="loginError">{{ loginError }}</div>
+        </form>
+  
+        <!-- Sign Out Confirmation Dialog -->
+        <div v-if="showSignOutDialog" class="fixed top-0 left-0 right-0 bottom-0 bg-gray-900 bg-opacity-50">
+            <div class="popup-container">
+              <div class="popup-content">
+                <h4 class="text-center text-purple-500 text-2xl font-semibold mb-4">
+                  Confirm Log Out
+                </h4>
+                <p>Are you sure you want to log out?</p>
+                <div class="flex justify-between mt-4">
+                  <button @click="logOut" class="py-0.5 px-2 bg-red-900 text-white rounded-lg">Confirm</button>
+                  <button @click="closeSignOutDialog" class="py-0.5 px-2 bg-blue-900 text-white rounded-lg">Cancel</button>
+                </div>
+              </div>
+            </div>
+          </div>
+  
+        <!-- Shift Selection Popup -->
+          <div v-if="showShiftPopup" class="absolute top-0 left-0 right-0 bottom-0 flex items-center justify-center bg-gray-900 bg-opacity-50">
+            <div class="popup-container">
+              <div class="popup-content-large">
+                <h4 class="text-center text-purple-500 text-2xl font-semibold mb-4">
+                  Select Shift
+                </h4>
+                <input type="radio" id="morning" value="morning" v-model="selectedShift"/>
+                <label for="morning">Morning Shift</label><br>
+                <input type="radio" id="afternoon" value="afternoon" v-model="selectedShift"/>
+                <label for="afternoon">Afternoon Shift</label><br>
+                <input type="radio" id="evening" value="evening" v-model="selectedShift"/>
+                <label for="evening">Evening Shift</label><br>
+                <div class="flex justify-between mt-4">
+                  <button @click="loginWithShift" class="py-0.5 px-2 bg-blue-900 text-white rounded-lg">Login</button>
+                  <button @click="closeShiftPopup" class="py-0.5 px-2 bg-red-900 text-white rounded-lg">Close</button>
+                </div>
+            </div>
+          </div>
+        </div>
+  
+         
+  
+          <!-- Logout Time Display -->
+      <div v-if="logoutTime" class="absolute bottom-0 text-center left-0 right-0 p-4 bg-red-500 text-white">
+        Logged out at: {{ logoutTime }}
       </div>
-
-      <div class="mb-4">
-        <label for="password" class="block text-sm font-medium text-gray-600">Password</label>
-        <input type="password" id="password" class="mt-1 p-2 w-full border rounded-md">
+  
       </div>
-
-      <button type="submit" class="w-full bg-blue-500 text-white py-2 rounded-md hover:bg-blue-600">Login</button>
-    </form>
-  </div>
-</template>
+    </div>
+  </template>
+  
+  <script>
+  export default {
+    layout: false,
+  
+    data() {
+      return {
+        username: "",
+        password: "",
+        loginError: null,
+        showShiftPopup: false,
+        selectedShift: "",
+        showSignOutDialog: false,
+        logoutTime: null,
+      };
+    },
+    methods: {
+      handleLogin() {
+        if (this.username === "admin" && this.password === "admin") {
+          this.showShiftPopup = true;
+        } else {
+          this.loginError = "Login failed. Please check your credentials.";
+        }
+      },
+      loginWithShift() {
+        // Redirect to the desired page based on the selected shift
+        if (this.selectedShift === "morning") {
+          this.$router.push("/StaffLogs");
+        } else if (this.selectedShift === "afternoon") {
+          this.$router.push("/CustomerPage");
+        } else if (this.selectedShift === "evening") {
+          this.$router.push("/StaffLogs");
+        }
+      },
+      closeShiftPopup() {
+        this.showShiftPopup = false;
+      },
+      openSignOutDialog() {
+        this.showSignOutDialog = true;
+      },
+      closeSignOutDialog() {
+        this.showSignOutDialog = false;
+      },
+      logOut() {
+        this.closeSignOutDialog();
+        const now = new Date();
+        const logoutTime = `${now.getHours()}:${now.getMinutes()}:${now.getSeconds()}`;
+        this.logoutTime = logoutTime;
+      },
+    },
+  };
+  </script>
+  
+  <style>
+  .feedback-message {
+    color: red;
+  }
+  
+  .popup-container {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100%;
+    opacity: 0;
+    animation: fadeIn 0.5s ease-in-out forwards;
+  }
+  
+  .popup-content {
+    background: white;
+    padding: 20px;
+    border-radius: 8px;
+    transform: translateY(-100%);
+    animation: slideIn 0.5s ease-in-out forwards;
+  }
+  
+  .popup-content-large {
+    background: white;
+    padding: 20px;
+    border-radius: 8px;
+    width: 300px;
+    transform: translateY(-100%);
+    animation: slideIn 0.5s ease-in-out forwards;
+  }
+  @keyframes fadeIn {
+    to {
+      opacity: 1;
+    }
+  }
+  
+  @keyframes slideIn {
+    to {
+      transform: translateY(0);
+    }
+  }
+  </style>
